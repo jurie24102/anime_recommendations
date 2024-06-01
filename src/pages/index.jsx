@@ -30,17 +30,27 @@ export default function Home({ initialAnimeData }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const updatedAnimeData = [...animeData, newAnime];
-    setAnimeData(updatedAnimeData);
-    await fetch('/api/saveAnime', {
+  e.preventDefault();
+  const updatedAnimeData = [...animeData, newAnime];
+  setAnimeData(updatedAnimeData);
+  
+  try {
+    const res = await fetch('/api/saveAnime', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedAnimeData),
     });
+
+    if (!res.ok) {
+      throw new Error('Failed to save anime data');
+    }
+
     setNewAnime({ title: '', description: '', rating: '', site: '', image: '' });
     handleClose();
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   const handleClickOpen = () => {
     setOpen(true);
